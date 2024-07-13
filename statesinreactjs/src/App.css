@@ -1,0 +1,131 @@
+.App {
+  text-align: center;
+  background-color: #ffffff;
+  min-height: 71vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: rgb(61, 139, 173);
+}
+
+h2 {
+  color: rgb(147, 47, 47);
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.profile, .profile .profile-img, .profile .profile-details  {
+  
+  padding: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items:center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: rgb(147, 47, 47);
+  background-color: rgb(240, 228, 228);
+  z-index: 1;
+  border-radius: 10px;
+  box-shadow: #0c0c0c 0px 0px 15px;
+}
+
+.profile {
+  margin: 40px;
+}
+
+.profile .profile-img, .profile .profile-details {
+  margin:20px;
+  flex-direction: column;
+  background-color: #e4c2c2;
+}
+
+.profile .profile-details  {
+  align-items: start;
+}
+
+.profile .profile-img {
+  padding-top: 22px;
+  padding-bottom: 22px;
+}  
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgb(39, 104, 177);
+  background-color: #ffffff;
+}
+
+.fHeading {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.fHeading h1, .fHeading img {
+  margin-left: 30px;
+}
+
+.fHeading img {
+  margin-top: 20px;
+}
+
+.links, .links a {
+  display: flex;
+  margin-left: 10px;
+  margin-right: 10px;
+  justify-content: flex-end;
+  text-decoration: none;
+  color: #0cb5e3;
+  font-weight: bold;
+}
+
+.links a:hover {
+  color: black;
+}
+
+.App-footer {
+  background-color: white;
+  color: rgb(39, 104, 177);
+  padding: 20px;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 15px;
+}
+
+.App-footer .footer-links a {
+  color: #61dafb;
+  font-weight: bold;
+  text-decoration: none;
+  margin-top: 10px;
+  font-size: 15px;
+  padding: 20px;
+}
+
+.App-footer .footer-links a:hover {
+  color: black;
+}
+
+@media screen and (max-width: 844px) {
+  .profile, .profile .profile-img, .profile .profile-details  {
+    
+    flex-direction: column;
+    font-size: calc(10px + 2vmin);
+    
+  }
+  .profile .profile-img {
+    align-items: center;
+  }
+  .profile .profile-details  {
+    font-size: calc(6px + 2vmin);
+  }
+
+  .fHeading h1 {
+    font-size: 30px;
+  }
+}
