@@ -1,0 +1,23 @@
+.App-footer {
+    background-color: white;
+    color: rgb(39, 104, 177);
+    padding: 20px;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 15px;
+  }
+  
+  .App-footer .footer-links a {
+    color: #61dafb;
+    font-weight: bold;
+    text-decoration: none;
+    margin-top: 10px;
+    font-size: 15px;
+    padding: 20px;
+  }
+  
+  .App-footer .footer-links a:hover {
+    color: black;
+  }
