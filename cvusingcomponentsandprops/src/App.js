@@ -1,11 +1,11 @@
 import './App.css';
 import React, { Component } from 'react';
-import Personaldetails from './component/personaldetails';
-import Summary from './component/summary';
-import Educationdetails from './component/educationdetails';
-import Projects from './component/projects';
-import Internships from './component/internships';
-import Skillset from './component/skillset';
+import Personaldetails from './components/personaldetails';
+import Summary from './components/summary';
+import Educationdetails from './components/educationaldetails';
+import Projects from './components/projects';
+import Internships from './components/internships';
+import Skillset from './components/skillset';
 
 class App extends Component {
   state = {
