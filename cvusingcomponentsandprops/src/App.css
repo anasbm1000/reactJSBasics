@@ -1,0 +1,29 @@
+.App {
+  text-align: center;
+  margin: 20px;
+}
+
+.skillset {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.college, .internship, .project {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+#collegename, #projectname, #companyname {
+  font-weight: bold;
+}
+
+h2, h3, h4 {
+  margin: 10px 0;
+}
+
+p {
+  margin: 5px 0;
+}
