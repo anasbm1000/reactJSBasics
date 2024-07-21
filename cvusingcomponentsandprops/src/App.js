@@ -27,29 +27,33 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <Personaldetails
-          name={this.state.name}
-          place={this.state.place}
-          city={this.state.city}
-          jobRole={this.state.jobRole}
-          phone={this.state.phone}
-          emailID={this.state.emailID}
-          github={this.state.github}
-          linkedin={this.state.linkedin}
-        />
-        <Summary />
-        <Educationdetails
-          college1={this.state.college1}
-          college1CGPA={this.state.college1CGPA}
-          college2={this.state.college2}
-          college2CGPA={this.state.college2CGPA}
-          college3={this.state.college3}
-          college3CGPA={this.state.college3CGPA}
-        />
-        <Projects />
-        <Internships />
-        <Skillset />
+      <div>
+        <div className="App-header">
+          <Personaldetails
+            name={this.state.name}
+            place={this.state.place}
+            city={this.state.city}
+            jobRole={this.state.jobRole}
+            phone={this.state.phone}
+            emailID={this.state.emailID}
+            github={this.state.github}
+            linkedin={this.state.linkedin}
+          />
+        </div>
+        <div className="App-body">
+          <Summary />
+          <Educationdetails
+            college1={this.state.college1}
+            college1CGPA={this.state.college1CGPA}
+            college2={this.state.college2}
+            college2CGPA={this.state.college2CGPA}
+            college3={this.state.college3}
+            college3CGPA={this.state.college3CGPA}
+          />
+          <Projects />
+          <Internships />
+          <Skillset />
+        </div>
       </div>
     );
   }
