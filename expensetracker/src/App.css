@@ -103,6 +103,15 @@ main {
   gap: 20px;
 }
 
+
+.profile-container.submitted .profile {
+  order: -1;
+}
+
+.profile-container.submitted .profile-form {
+  order: 1;
+}
+
 th, td {
   padding: 10px;
   font-size: 15px;
