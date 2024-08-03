@@ -32,15 +32,15 @@ class Ourproducts extends React.Component {
                     <h2>Our Products</h2>
                 </div>
                 <div className="card-container">
-                {this.state.productdetails.map((value) => (
-                    <div className="card">
-                        <h3>{value.name}</h3>
-                        <p>Spec1: {value.spec1}</p>
-                        <p>Spec2: {value.spec2}</p>
-                        <p>Spec3: {value.spec3}</p>
-                    </div>
-                ))}
-            </div>
+                    {this.state.productdetails.map((value) => (
+                        <div className="card">
+                            <h3>{value.name}</h3>
+                            <p>Spec1: {value.spec1}</p>
+                            <p>Spec2: {value.spec2}</p>
+                            <p>Spec3: {value.spec3}</p>
+                        </div>
+                    ))}
+                </div>
             </div>
         );
     }
