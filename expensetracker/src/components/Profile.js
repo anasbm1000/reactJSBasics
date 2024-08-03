@@ -78,7 +78,7 @@ class Profile extends Component {
     render() {
         const { form, profile, submitted } = this.state;
         return (
-            <div className="profile-container">
+            <div className={`profile-container ${submitted ? 'submitted' : ''}`}>
                 <form className="profile-form" onSubmit={this.handleSubmit}>
                     <h2>Enter Your Profile Details</h2>
                     <table>
