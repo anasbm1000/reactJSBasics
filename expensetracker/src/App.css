@@ -100,6 +100,7 @@ main {
   padding: 20px;
   width: 100%;
   margin-bottom: 20px;
+  gap: 20px;
 }
 
 th, td {
@@ -129,7 +130,7 @@ input::placeholder {
   flex-direction: column;
   align-items: center;
   background: white;
-  padding: 20px 20px;
+  padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: max-content;
@@ -169,6 +170,13 @@ input::placeholder {
   margin-top: 10px;
 }
 
+.form-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
 .profile-form button:hover {
   background-color: #45a049;
 }
@@ -177,7 +185,7 @@ input::placeholder {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 20px 20px;
+  padding: 20px;
   background: white;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
