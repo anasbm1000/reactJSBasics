@@ -18,10 +18,21 @@ main {
   margin-bottom: 60px; 
   width: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   flex-direction: column;
+  background:url('../public/background.png') no-repeat center ; 
+  background-size:contain;  
 }
+
+.visible {
+  visibility: visible;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
 
 .footer {
   background-color: #4CAF50;
@@ -42,6 +53,7 @@ main {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+  margin-top: 90px;
   min-width: 500px;
   min-height: 400px;
 }
@@ -49,6 +61,12 @@ main {
 .home h2 {
   margin-bottom: 30px;
   color: #333;
+}
+
+#expense {
+  color: #4CAF50;
+  font-weight: bolder;
+  font-size: 1.8rem;
 }
 
 .home p {
@@ -200,6 +218,8 @@ input::placeholder {
   min-height: 300px;
   min-width: max-content;
   position: relative; 
+  margin-top: 20vh;
+  margin-bottom: 20vh;
 }
 
 .profile-img {
@@ -220,11 +240,8 @@ input::placeholder {
   margin-right: 20px;
   text-align: left;
   font-size: 15px;
+  background: white;
   margin-bottom: 20px;
-}
-
-.profile-details div {
-  color: #333;
 }
 
 .profile-buttons {
@@ -258,168 +275,6 @@ input::placeholder {
   display: inline-block;
 }
 
-.income, .expenses {
-  background: white;
-  padding: 50px 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.income h2, .expenses h2 {
-  margin-bottom: 20px;
-  color: #333;
-  text-align: center;
-}
-
-.income form, .expenses form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.income label, .expenses label {
-  margin-bottom: 15px;
-  width: 100%;
-  max-width: 500px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.income input, .expenses input {
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  flex: 1;
-  margin-left: 10px;
-}
-
-.income button, .expenses button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  color: white;
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.income button:hover, .expenses button:hover {
-  background-color: #45a049;
-}
-
-.left-out-income {
-  margin-top: 20px;
-  font-size: 1.5rem;
-  color: #d9534f;
-  text-align: center;
-}
-
-.income-table {
-  width: 550px;
-  border-collapse: collapse;
-}
-
-.income-table th,
-.income-table td {
-  padding: 10px;
-  text-align: left;
-  vertical-align: middle;
-}
-
-.income-table th {
-  width: 30%;
-  font-weight: normal;
-  color: #333;
-}
-
-.income-table td {
-  width: 50%;
-}
-
-.income-table input {
-  width: 100%;
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
-}
-
-.income-table .button-cell {
-  text-align: right;
-}
-
-.income-table button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  color: white;
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.income-table button:hover {
-  background-color: #45a049;
-}
-
-.income-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.income-form {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-  width: 100%;
-  max-width: 600px;
-}
-
-.income-profile {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-  width: 100%;
-  max-width: 600px;
-  text-align: left;
-}
-
-.income-profile div {
-  margin-bottom: 10px;
-}
-
-.income-profile button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  color: white;
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.income-profile button:hover {
-  background-color: #45a049;
-}
-
-.income-table th,
-.income-table td {
-  padding: 10px;
-}
-
-.button-cell {
-  text-align: center;
-}
 
 button {
   padding: 10px 20px;
