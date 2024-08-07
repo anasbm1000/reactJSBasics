@@ -127,6 +127,7 @@ main {
 
 .profile-container.submitted .profile-form {
   order: 1;
+  display: none;
 }
 
 th, td {
