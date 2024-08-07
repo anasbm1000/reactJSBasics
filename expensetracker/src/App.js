@@ -9,6 +9,7 @@ import './App.css';
 const App = () => (
   <Router>
     <main>
+      <h1>Your available balance is: <span id="expense">Rs 15000</span></h1>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
