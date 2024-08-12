@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Customizedmsg from './Customizedmsg';
 import '../App.css';
 
 const Income = ({ income, setIncome }) => {
@@ -9,6 +10,8 @@ const Income = ({ income, setIncome }) => {
     { name: 'Emergencies', limit: '' }
   ]);
   const [submitted, setSubmitted] = useState(false);
+  const [customMessage, setCustomMessage] = useState(''); 
+  const [showMessage, setShowMessage] = useState(false); 
 
   useEffect(() => {
     const storedIncomeData = localStorage.getItem('incomeData');
@@ -25,7 +28,8 @@ const Income = ({ income, setIncome }) => {
       const newIncome = Number(value);
       const totalCategoryLimit = categories.reduce((sum, cat) => sum + Number(cat.limit), 0);
       if (newIncome < totalCategoryLimit) {
-        window.alert('Total category limits exceed income');
+        setCustomMessage('Total category limits exceed income');
+        setShowMessage(true);
         return;
       }
       setIncome(newIncome);
@@ -35,7 +39,8 @@ const Income = ({ income, setIncome }) => {
       ));
       const totalNewLimit = updatedCategories.reduce((sum, cat) => sum + Number(cat.limit), 0);
       if (totalNewLimit > income) {
-        window.alert('Total category limits exceed income');
+        setCustomMessage('Total category limits exceed income');
+        setShowMessage(true);
         return;
       }
       setCategories(updatedCategories);
@@ -63,11 +68,15 @@ const Income = ({ income, setIncome }) => {
     localStorage.removeItem('incomeData');
   };
 
+  const handleCloseMessage = () => {
+    setShowMessage(false);
+  };
+
   return (
     <div className={`profile-container ${submitted ? 'submitted' : ''}`}>
       {submitted && (
-        <div className="profile">
-          <div className="profile-details">
+        <div className="profile incomebackground">
+          <div className="profile-details incomebackground">
             <h2>Income Details</h2>
             <div><strong>Income:</strong> {income}</div>
             {categories.map((category) => (
@@ -83,7 +92,7 @@ const Income = ({ income, setIncome }) => {
         </div>
       )}
       {!submitted && (
-        <form className="profile-form" onSubmit={handleSubmit}>
+        <form className="profile-form addincome" onSubmit={handleSubmit}>
           <h2>Add Income</h2>
           <table>
             <tbody>
@@ -122,6 +131,7 @@ const Income = ({ income, setIncome }) => {
           </div>
         </form>
       )}
+      <Customizedmsg show={showMessage} handleClose={handleCloseMessage} message={customMessage} />
     </div>
   );
 };
