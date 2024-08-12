@@ -69,12 +69,12 @@ const Profile = () => {
   return (
     <div className={`profile-container ${submitted ? 'submitted' : ''}`}>
       {submitted ? (
-        <div className="profile">
+        <div className="profile userprofile">
           <div className="profile-img">
             <img src="./profile.png" height={100} alt="pp" />
             <h2>{profile.name}</h2>
           </div>
-          <div className="profile-details">
+          <div className="profile-details userprofile">
             <div>Age: {profile.age}</div>
             <div>Gender: {profile.gender}</div>
             <div>Residence: {profile.residence}</div>
@@ -89,7 +89,7 @@ const Profile = () => {
           </div>
         </div>
       ) : (
-        <form className="profile-form" onSubmit={handleSubmit}>
+        <form className="profile-form addprofile" onSubmit={handleSubmit}>
           <h2>Enter Your Profile Details</h2>
           <table>
             <tbody>
