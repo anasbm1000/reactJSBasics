@@ -5,7 +5,7 @@ import Profile from './components/Profile';
 import Footer from './components/Footer';
 import Income from './components/Income';
 import Expenses from './components/Expenses';
-
+import Customizedmsg from './components/Customizedmsg';
 import './App.css';
 
 const App = () => {
@@ -25,13 +25,14 @@ const App = () => {
 
   return (
     <Router>
-      <h1>Your available balance is: <span id="expense">Rs {income}</span></h1>
+      <h1>Your available balance is: <span id="expense" className="blink">Rs {income}</span></h1>
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/income" element={<Income income={income} setIncome={handleSetIncome} />} />
           <Route path="/expenses" element={<Expenses />} />
+          <Route path="/customizedmsg" element={<Customizedmsg />} />
         </Routes>
       </main>
       <Footer />
