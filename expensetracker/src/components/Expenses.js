@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import '../App.css';
 import Customizedmsg from './Customizedmsg';  // Import the CustomizedMsg component
 
-const Expenses = () => {
+const Expenses = ({ income, updateTotalExpenses }) => {
   const [expenses, setExpenses] = useState([]);
   const [expenseName, setExpenseName] = useState('');
   const [expenseAmount, setExpenseAmount] = useState('');
@@ -15,19 +15,32 @@ const Expenses = () => {
   useEffect(() => {
     const storedExpenses = localStorage.getItem('expenses');
     if (storedExpenses) {
-      setExpenses(JSON.parse(storedExpenses));
+      const expenses = JSON.parse(storedExpenses);
+      setExpenses(expenses);
+      const newTotal = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
+      setTotalExpenses(newTotal);
+      updateTotalExpenses(newTotal);
     }
-  }, []);
+  }, [updateTotalExpenses]);
 
   useEffect(() => {
     const newTotal = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
     setTotalExpenses(newTotal);
-  }, [expenses]);
+    updateTotalExpenses(newTotal);
+  }, [expenses, updateTotalExpenses]);
 
   const handleAddExpense = (event) => {
     event.preventDefault();
     if (expenseName && expenseAmount) {
       const newExpense = { name: expenseName, amount: Number(expenseAmount) };
+      const newTotalExpenses = totalExpenses + newExpense.amount;
+
+      if (newTotalExpenses > income) {
+        setModalMessage('Total expenses exceed your income.');
+        setShowModal(true);
+        return;
+      }
+
       const updatedExpenses = [...expenses, newExpense];
       setExpenses(updatedExpenses);
       localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
@@ -44,6 +57,8 @@ const Expenses = () => {
   const handleClearExpenses = () => {
     setExpenses([]);
     localStorage.removeItem('expenses');
+    setTotalExpenses(0);
+    updateTotalExpenses(0);
   };
 
   const handleClearForm = () => {
