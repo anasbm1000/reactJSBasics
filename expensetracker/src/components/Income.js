@@ -24,6 +24,13 @@ const Income = ({ income, setIncome }) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+
+    if (value < 0) {
+      setCustomMessage('Values cannot be less than zero');
+      setShowMessage(true);
+      return;
+    }
+    
     if (name === 'income') {
       const newIncome = Number(value);
       const totalCategoryLimit = categories.reduce((sum, cat) => sum + Number(cat.limit), 0);
