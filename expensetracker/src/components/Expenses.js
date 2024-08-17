@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css';
-import Customizedmsg from './Customizedmsg';  // Import the CustomizedMsg component
+import Customizedmsg from './Customizedmsg';
 
 const Expenses = ({ income, updateTotalExpenses }) => {
   const [expenses, setExpenses] = useState([]);
@@ -31,39 +31,62 @@ const Expenses = ({ income, updateTotalExpenses }) => {
 
   const handleAddExpense = (event) => {
     event.preventDefault();
-    if (expenseName && expenseAmount) {
-      const newExpense = { name: expenseName, amount: Number(expenseAmount) };
-      const newTotalExpenses = totalExpenses + newExpense.amount;
+    const numericExpenseAmount = Number(expenseAmount);
 
-      if (newTotalExpenses > income) {
-        setModalMessage('Total expenses exceed your income.');
-        setShowModal(true);
-        return;
-      }
+    if (!expenseName || numericExpenseAmount < 0) {
+      setModalMessage('Please enter a valid expense name and amount greater than or equal to zero.');
+      setShowModal(true);
+      return;
+    }
 
-      const updatedExpenses = [...expenses, newExpense];
-      setExpenses(updatedExpenses);
-      localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
-      setExpenseName('');
-      setExpenseAmount('');
-      setMessage('Expense added successfully!');
-      setTimeout(() => setMessage(''), 3000);
-    } else {
-      setModalMessage('Please enter valid expense name and amount');
+    const newTotalExpenses = totalExpenses + numericExpenseAmount;
+
+    if (newTotalExpenses > income) {
+      setModalMessage('Total expenses exceed your income.');
+      setShowModal(true);
+      return;
+    }
+
+    const newExpense = { name: expenseName, amount: numericExpenseAmount };
+    const updatedExpenses = [...expenses, newExpense];
+    setExpenses(updatedExpenses);
+    localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
+    setExpenseName('');
+    setExpenseAmount('');
+    setMessage('Expense added successfully!');
+    setTimeout(() => setMessage(''), 3000);
+
+    checkPercentageAlert(newTotalExpenses, 'total expenses');
+  };
+
+  const checkPercentageAlert = (value, type) => {
+    const percentage = (value / income) * 100;
+    if (percentage >= 90) {
+      setModalMessage(`${type} have reached 90% of your income.`);
+      setShowModal(true);
+    } else if (percentage >= 75) {
+      setModalMessage(`${type} have reached 75% of your income.`);
+      setShowModal(true);
+    } else if (percentage >= 50) {
+      setModalMessage(`${type} have reached 50% of your income.`);
       setShowModal(true);
     }
   };
 
-  const handleClearExpenses = () => {
-    setExpenses([]);
-    localStorage.removeItem('expenses');
-    setTotalExpenses(0);
-    updateTotalExpenses(0);
+  const handleRemoveExpense = (index) => {
+    const updatedExpenses = expenses.filter((_, i) => i !== index);
+    setExpenses(updatedExpenses);
+    localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
+    setMessage('Expense removed successfully!');
+    setTimeout(() => setMessage(''), 3000);
   };
 
-  const handleClearForm = () => {
-    setExpenseName('');
-    setExpenseAmount('');
+  const handleClearExpenses = () => {
+    setExpenses([]);
+    setTotalExpenses(0);
+    localStorage.removeItem('expenses');
+    setMessage('All expenses cleared!');
+    setTimeout(() => setMessage(''), 3000);
   };
 
   const handleCloseModal = () => {
@@ -71,64 +94,75 @@ const Expenses = ({ income, updateTotalExpenses }) => {
   };
 
   return (
-    <div className="expenses-container">
+    <div className="profile-container">
       <Customizedmsg show={showModal} handleClose={handleCloseModal} message={modalMessage} />
-      <div className="profile expensesummary">
-        <div className="profile-details expensesummary">
-          <h2>Expenses Summary</h2>
-          <div>
-            <strong>Total Expenses:</strong> Rs {totalExpenses}
-          </div>
-          <div className="expense-list">
-            {expenses.map((expense, index) => (
-              <div key={index}>
-                <strong>{expense.name}:</strong> Rs {expense.amount}
-              </div>
-            ))}
-          </div>
+      <h2>Expenses</h2>
+      <form onSubmit={handleAddExpense} className="profile-form addincome">
+        {message && <p className="message">{message}</p>}
+        <div className="input-group">
+          
+          <input
+            type="text"
+            placeholder="Expense Name"
+            value={expenseName}
+            onChange={(e) => setExpenseName(e.target.value)}
+          />
+          <input
+            type="number"
+            placeholder="Amount"
+            value={expenseAmount}
+            onChange={(e) => setExpenseAmount(e.target.value)}
+            min="0"
+          />
         </div>
-        <div className="profile-buttons">
-          <button onClick={handleClearExpenses}>Clear</button>
+        <div className="form-buttons">
+          <button type="submit">Add Expense</button>
+        </div>
+      </form>
+
+      
+
+      <h2>Total Expenses: {totalExpenses}</h2>
+
+      <div className='profile-table'>
+        {expenses.length > 0 ? (
+          <table className="expense-table">
+            <thead>
+              <tr>
+                <th>Expense</th>
+                <th>Amount</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {expenses.map((expense, index) => (
+                <tr key={index}>
+                  <td>{expense.name}</td>
+                  <td>{expense.amount}</td>
+                  <td>
+                    <button onClick={() => handleRemoveExpense(index)}>Remove</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No expenses added yet.</p>
+        )}
+        
+        
+
+        <div className="form-buttons expenseclear">
+          <button className="clear-button" onClick={handleClearExpenses}>Clear All</button>
           <Link to="/" className="home-button">Home</Link>
         </div>
       </div>
-      <div className="profile-form addexpense">
-        <h2>Add Expenses</h2>
-        {message && <p className="success-message">{message}</p>}
-        <form onSubmit={handleAddExpense}>
-          <table>
-            <tbody>
-              <tr>
-                <th>Expense Name:</th>
-                <td>
-                  <input
-                    type="text"
-                    value={expenseName}
-                    onChange={(e) => setExpenseName(e.target.value)}
-                    placeholder="Enter expense name"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>Expense Amount:</th>
-                <td>
-                  <input
-                    type="number"
-                    value={expenseAmount}
-                    onChange={(e) => setExpenseAmount(e.target.value)}
-                    placeholder="Enter expense amount"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div className="form-buttons">
-            <button type="submit">Add Expense</button>
-            <button type="button" onClick={handleClearForm}>Clear</button>
-            <Link to="/" className="home-button">Home</Link>
-          </div>
-        </form>
-      </div>
+
+      
+
+      
+
+      
     </div>
   );
 };
