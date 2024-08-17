@@ -81,7 +81,7 @@ h1 {
 }
 
 #expense {
-  color: #4CAF50;
+  color: #f30909;
   font-weight: bolder;
   font-size: 2rem;
 }
@@ -384,9 +384,10 @@ button:hover {
   margin-top: 10px;
 }
 
-.success-message {
+.success-message, .message {
   color: green;
   font-weight: bold;
+  font-size: 10px;
   margin-bottom: 10px;
 }
 
@@ -447,7 +448,7 @@ button:hover {
 }
 
 .profile.expensesummary {
-  background: url('../public/expensebackground.gif') no-repeat center; 
+  background: url('../public/expensesummary.gif') no-repeat center; 
   background-size:cover;
   font-weight: bolder;
 }
@@ -466,7 +467,7 @@ button:hover {
 }
 
 .profile-form.addincome {
-  background: url('../public/addincome.png') no-repeat center; 
+  background: url('../public/addincomee.png') no-repeat center; 
   background-size:cover;
   color: #ffffff;
   font-size: 30px;
@@ -482,7 +483,7 @@ button:hover {
 }
 
 .profile-form.addprofile {
-  background: url('../public/addprofile.png') no-repeat center; 
+  background: url('../public/addprofilee.png') no-repeat center; 
   background-size:cover;
   color: #ffffff;
   font-size: 30px;
@@ -494,11 +495,77 @@ button:hover {
 }
 
 .expense-list {
-  background: -webkit-linear-gradient(white, black);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
+  color: #ffffff;
+  font-size: 20px;
   font-weight: bolder;
   margin-bottom: 20px;
+}
+
+
+.input-group input, .input-group button {
+  width: 90%;
+  margin-top: 10px;
+}
+
+.input-group button {
+  margin-top: 20px;
+}
+
+.profile-table {
+  margin-top: 20px;
+  border-collapse: collapse;
+  background: url('../public/expensesummaryy.jpg') no-repeat center; 
+  background-size:cover;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.expense-table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.total-expenses {
+  font-size: 1.2rem;
+  margin-top: 20px;
+  color:#fff;
+  width: 50%;
+  text-align: center;
+}
+
+.expense-table th, .expense-table td {
+  padding: 12px;
+  text-align: left;
+  width: 100px;
+  color:#fff
+  
+}
+
+.expense-table th {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.expense-table td {
+  font-size: 1.1rem;
+  
+}
+
+.expense-table tr {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.expense-table tr:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s, box-shadow 0.3s;
+  transform: translateY(-3px);
+}
+
+.clear-button {
+  margin-top: 20px;
+}
+
+.form-buttons.expenseclear .home-button {
+  margin-top: 20px;
 }
