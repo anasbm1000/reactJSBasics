@@ -61,7 +61,11 @@ const Expenses = ({ income, updateTotalExpenses }) => {
 
   const checkPercentageAlert = (value, type) => {
     const percentage = (value / income) * 100;
-    if (percentage >= 90) {
+    if (percentage === 100) {
+      setModalMessage(`You are running out of balance`);
+      setShowModal(true);
+    }
+    else if (percentage >= 90) {
       setModalMessage(`${type} have reached 90% of your income.`);
       setShowModal(true);
     } else if (percentage >= 75) {
