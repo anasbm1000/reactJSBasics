@@ -22,7 +22,7 @@ const Income = ({ income, setIncome }) => {
     }
   }, []);
 
-  const handleChange = (event) => {
+  const handleChange = (event, index) => {
     const { name, value } = event.target;
 
     if (value < 0) {
@@ -30,7 +30,7 @@ const Income = ({ income, setIncome }) => {
       setShowMessage(true);
       return;
     }
-    
+
     if (name === 'income') {
       const newIncome = Number(value);
       const totalCategoryLimit = categories.reduce((sum, cat) => sum + Number(cat.limit), 0);
@@ -41,18 +41,31 @@ const Income = ({ income, setIncome }) => {
       }
       setIncome(newIncome);
     } else {
-      const updatedCategories = categories.map(category => (
-        category.name === name ? { ...category, limit: value } : category
-      ));
-      const totalNewLimit = updatedCategories.reduce((sum, cat) => sum + Number(cat.limit), 0);
-      if (totalNewLimit > income) {
+      const updatedCategories = [...categories];
+      const newLimit = Number(value);
+
+      const totalNewLimit = updatedCategories.reduce((sum, cat, i) =>
+        sum + (i === index ? newLimit : Number(cat.limit)), 0);
+
+      if (newLimit > income || totalNewLimit > income) {
         setCustomMessage('Total category limits exceed income');
         setShowMessage(true);
         return;
       }
+      updatedCategories[index].limit = newLimit;
       setCategories(updatedCategories);
     }
   };
+
+  const addCategory = () => {
+    if (categories.length < 10) {
+      setCategories([...categories, { name: 'New Category', limit: '' }]);
+    } else {
+      setCustomMessage('Maximum of 10 categories allowed');
+      setShowMessage(true);
+    }
+  };
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -79,6 +92,11 @@ const Income = ({ income, setIncome }) => {
     setShowMessage(false);
   };
 
+  const handleCategoryNameChange = (index, newName) => {
+    const updatedCategories = [...categories];
+    updatedCategories[index].name = newName;
+    setCategories(updatedCategories);
+  };
   return (
     <div className={`profile-container ${submitted ? 'submitted' : ''}`}>
       {submitted && (
@@ -86,8 +104,8 @@ const Income = ({ income, setIncome }) => {
           <div className="profile-details incomebackground">
             <h2>Income Details</h2>
             <div><strong>Income:</strong> {income}</div>
-            {categories.map((category) => (
-              <div key={category.name}>
+            {categories.map((category, index) => (
+              <div key={index}>
                 <strong>{category.name} Limit:</strong> {category.limit}
               </div>
             ))}
@@ -115,22 +133,37 @@ const Income = ({ income, setIncome }) => {
                   />
                 </td>
               </tr>
-              {categories.map((category) => (
-                <tr key={category.name}>
-                  <th>{category.name} Limit:</th>
-                  <td>
-                    <input
-                      type="number"
-                      name={category.name}
-                      value={category.limit}
-                      placeholder={`Enter ${category.name} limit`}
-                      onChange={handleChange}
-                    />
-                  </td>
-                </tr>
+              {categories.map((category, index) => (
+                <React.Fragment key={index}>
+                  <tr>
+                    <th>Category Name:</th>
+                    <td>
+                      <input
+                        type="text"
+                        value={category.name}
+                        onChange={(e) => handleCategoryNameChange(index, e.target.value)}
+                        placeholder="Enter category name"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>{category.name} Limit:</th>
+                    <td>
+                      <input
+                        type="number"
+                        name={category.name}
+                        value={category.limit}
+                        placeholder={`Enter ${category.name} limit`}
+                        onChange={(e) => handleChange(e, index)}
+                        min="0"
+                      />
+                    </td>
+                  </tr>
+                </React.Fragment>
               ))}
             </tbody>
           </table>
+          <button type="button" onClick={addCategory}>Add Category</button>
           <div className="form-buttons">
             <button type="submit">Save</button>
             <button type="button" onClick={handleClear}>Clear</button>
