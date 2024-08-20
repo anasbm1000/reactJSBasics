@@ -21,7 +21,10 @@ main {
   justify-content: center;
   flex-direction: column;
   background:url('../public/background.png') no-repeat center ; 
-  background-size:cover;  
+  background-size: 500vh;
+  background-position: center;
+
+   
 }
 
 h1 {
@@ -280,7 +283,7 @@ input::placeholder {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   min-height: 400px;
-  max-height: fit-content;
+  max-height: 1000px;
   min-width: max-content;
   position: relative; 
   margin-top: 10vh;
@@ -387,7 +390,7 @@ button:hover {
 .success-message, .message {
   color: green;
   font-weight: bold;
-  font-size: 10px;
+  font-size: 20px;
   margin-bottom: 10px;
 }
 
@@ -422,6 +425,7 @@ button:hover {
   background: url('../public/divbackgroundd.png') no-repeat center; 
   background-size: cover;
   color:#ffffff;
+  min-height: 720px;
 }
 
 .profile-details.incomebackground {
