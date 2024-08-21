@@ -38,8 +38,9 @@ const App = () => {
 
   return (
     <Router>
-      <h1>Your available balance is: <span id="expense" className="blink">Rs {availableBalance}</span></h1>
+      
       <main>
+        <h1>Your available balance is: <span id="expense" className="blink">Rs {availableBalance}</span></h1>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
