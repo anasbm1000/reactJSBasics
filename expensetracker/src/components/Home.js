@@ -8,13 +8,13 @@ const Home = () => (
       <h2>Welcome to <span id="expense"> Expense </span> Tracker</h2>
       <div className="card-container">
         <div className="card">
-          <Link to="/profile">Profile</Link>
+          <Link to="/profile">Profile Details</Link>
         </div>
         <div className="card">
-          <Link to="/income">Add Income</Link>
+          <Link to="/income">Budget Details</Link>
         </div>
         <div className="card">
-          <Link to="/expenses">Calculate Expenses</Link>
+          <Link to="/expenses">Expense Details</Link>
         </div>
       </div>
     </div>
