@@ -21,7 +21,7 @@ main {
   justify-content: center;
   flex-direction: column;
   background:url('../public/background.png') no-repeat center ; 
-  background-size: 500vh;
+  background-size:cover;
   background-position: center;
 
    
@@ -425,12 +425,12 @@ button:hover {
   background: url('../public/divbackgroundd.png') no-repeat center; 
   background-size: cover;
   color:#ffffff;
-  min-height: 720px;
 }
 
 .profile-details.incomebackground {
   color:#ffffff;
   font-size: 25px;
+  height: 750px;
 }
 
 .profile-details.incomebackground h2 {
