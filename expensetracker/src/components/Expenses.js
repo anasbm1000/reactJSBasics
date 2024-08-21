@@ -12,6 +12,7 @@ const Expenses = ({ income, updateTotalExpenses }) => {
   const [modalMessage, setModalMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [googleLoaded, setGoogleLoaded] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
 
   useEffect(() => {
     const storedExpenses = localStorage.getItem('expenses');
@@ -51,15 +52,27 @@ const Expenses = ({ income, updateTotalExpenses }) => {
       return;
     }
 
-    const newExpense = { name: expenseName, amount: numericExpenseAmount };
-    const updatedExpenses = [...expenses, newExpense];
-    setExpenses(updatedExpenses);
-    localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
+    if (editIndex !== null) {
+      // Editing an existing expense
+      const updatedExpenses = [...expenses];
+      const oldAmount = updatedExpenses[editIndex].amount;
+      updatedExpenses[editIndex] = { name: expenseName, amount: numericExpenseAmount };
+      setExpenses(updatedExpenses);
+      localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
+      setEditIndex(null);
+      setMessage('Expense updated successfully!');
+    } else {
+      // Adding a new expense
+      const newExpense = { name: expenseName, amount: numericExpenseAmount };
+      const updatedExpenses = [...expenses, newExpense];
+      setExpenses(updatedExpenses);
+      localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
+      setMessage('Expense added successfully!');
+    }
+
     setExpenseName('');
     setExpenseAmount('');
-    setMessage('Expense added successfully!');
     setTimeout(() => setMessage(''), 3000);
-
     checkPercentageAlert(newTotalExpenses, 'total expenses');
   };
 
@@ -95,6 +108,13 @@ const Expenses = ({ income, updateTotalExpenses }) => {
     setMessage('All expenses cleared!');
     setTimeout(() => setMessage(''), 3000);
     updateTotalExpenses(0);
+  };
+
+  const handleEditExpense = (index) => {
+    const expenseToEdit = expenses[index];
+    setExpenseName(expenseToEdit.name);
+    setExpenseAmount(expenseToEdit.amount);
+    setEditIndex(index);
   };
 
   const handleCloseModal = () => {
@@ -144,8 +164,9 @@ const Expenses = ({ income, updateTotalExpenses }) => {
   return (
     <div className="profile-container">
       <Customizedmsg show={showModal} handleClose={handleCloseModal} message={modalMessage} />
-      <h2>Expenses</h2>
+      
       <form onSubmit={handleAddExpense} className="profile-form addincome">
+        <h2>Expenses</h2>
         {message && <p className="message">{message}</p>}
         <div className="input-group">
           <input
@@ -163,7 +184,7 @@ const Expenses = ({ income, updateTotalExpenses }) => {
           />
         </div>
         <div className="form-buttons">
-          <button type="submit">Add Expense</button>
+          <button type="submit">{editIndex !== null ? 'Update Expense' : 'Add Expense'}</button>
         </div>
       </form>
 
@@ -177,7 +198,8 @@ const Expenses = ({ income, updateTotalExpenses }) => {
                 <tr>
                   <th>Expense</th>
                   <th>Amount</th>
-                  <th>Actions</th>
+                  <th>Remove</th>
+                  <th>Edit</th>
                 </tr>
               </thead>
               <tbody>
@@ -185,14 +207,13 @@ const Expenses = ({ income, updateTotalExpenses }) => {
                   <tr key={index}>
                     <td>{expense.name}</td>
                     <td>{expense.amount}</td>
-                    <td>
-                      <button onClick={() => handleRemoveExpense(index)}>Remove</button>
-                    </td>
+                    <td><button onClick={() => handleRemoveExpense(index)}>Remove</button></td>
+                    <td><button onClick={() => handleEditExpense(index)}>Edit</button></td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <div id="chart_div" style={{ width: '100%', height: '500px' }}></div>
+            
           </>
         ) : (
           <p>No expenses added yet.</p>
@@ -203,6 +224,7 @@ const Expenses = ({ income, updateTotalExpenses }) => {
           <Link to="/" className="home-button">Home</Link>
         </div>
       </div>
+      <div id="chart_div" style={{ width: '90%', height: '500px' }}></div>
     </div>
   );
 };
