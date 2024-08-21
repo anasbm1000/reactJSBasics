@@ -66,7 +66,6 @@ const Income = ({ income, setIncome }) => {
     }
   };
 
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const incomeData = { income, categories };
@@ -97,6 +96,12 @@ const Income = ({ income, setIncome }) => {
     updatedCategories[index].name = newName;
     setCategories(updatedCategories);
   };
+
+  const handleRemoveCategory = (index) => {
+    const updatedCategories = categories.filter((_, i) => i !== index);
+    setCategories(updatedCategories);
+  };
+
   return (
     <div className={`profile-container ${submitted ? 'submitted' : ''}`}>
       {submitted && (
@@ -122,7 +127,7 @@ const Income = ({ income, setIncome }) => {
           <table>
             <tbody>
               <tr>
-                <th>Income:</th>
+                <th><input type="text" name="income" value="Income" placeholder="Enter your income" /></th>
                 <td>
                   <input
                     type="number"
@@ -136,7 +141,6 @@ const Income = ({ income, setIncome }) => {
               {categories.map((category, index) => (
                 <React.Fragment key={index}>
                   <tr>
-                    <th>Category Name:</th>
                     <td>
                       <input
                         type="text"
@@ -145,9 +149,6 @@ const Income = ({ income, setIncome }) => {
                         placeholder="Enter category name"
                       />
                     </td>
-                  </tr>
-                  <tr>
-                    <th>{category.name} Limit:</th>
                     <td>
                       <input
                         type="number"
@@ -157,6 +158,9 @@ const Income = ({ income, setIncome }) => {
                         onChange={(e) => handleChange(e, index)}
                         min="0"
                       />
+                    </td>
+                    <td>
+                      <button type="button" onClick={() => handleRemoveCategory(index)}>Remove</button>
                     </td>
                   </tr>
                 </React.Fragment>
