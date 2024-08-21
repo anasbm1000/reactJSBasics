@@ -12,6 +12,7 @@ const Profile = () => {
     phone: "",
     address: "",
     city: "",
+    profilePicture: "", 
   });
   const [profile, setProfile] = useState({
     name: "",
@@ -22,6 +23,7 @@ const Profile = () => {
     phone: "",
     address: "",
     city: "",
+    profilePicture: "", 
   });
   const [submitted, setSubmitted] = useState(false);
 
@@ -39,6 +41,20 @@ const Profile = () => {
       ...prevForm,
       [name]: value,
     }));
+  };
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm((prevForm) => ({
+          ...prevForm,
+          profilePicture: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = (event) => {
@@ -63,6 +79,7 @@ const Profile = () => {
       phone: "",
       address: "",
       city: "",
+      profilePicture: "", 
     });
   };
 
@@ -75,7 +92,11 @@ const Profile = () => {
       {submitted ? (
         <div className="profile userprofile">
           <div className="profile-img">
-            <img src="./profile.png" height={100} alt="pp" />
+            {profile.profilePicture ? (
+              <img src={profile.profilePicture} height={100} alt="Profile" />
+            ) : (
+              <img src="./profile.png" height={100} alt="Default Profile" />
+            )}
             <h2>{profile.name}</h2>
           </div>
           <div className="profile-details userprofile">
@@ -120,6 +141,12 @@ const Profile = () => {
                 <td><input type="text" name="city" placeholder='Enter your city' value={form.city} onChange={handleChange} required /></td>
                 <th>Address</th>
                 <td><input type="text" name="address" placeholder='Enter your address' value={form.address} onChange={handleChange} required /></td>
+              </tr>
+              <tr>
+                <th>Profile Picture</th>
+                <td colSpan="3">
+                  <input type="file" accept="image/*" onChange={handleImageChange} />
+                </td>
               </tr>
             </tbody>
           </table>
