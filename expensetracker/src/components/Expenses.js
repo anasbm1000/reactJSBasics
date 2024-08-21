@@ -11,6 +11,7 @@ const Expenses = ({ income, updateTotalExpenses }) => {
   const [message, setMessage] = useState('');
   const [modalMessage, setModalMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [googleLoaded, setGoogleLoaded] = useState(false);
 
   useEffect(() => {
     const storedExpenses = localStorage.getItem('expenses');
@@ -24,11 +25,13 @@ const Expenses = ({ income, updateTotalExpenses }) => {
   }, [updateTotalExpenses]);
 
   useEffect(() => {
+    if (googleLoaded) {
+      drawChart();
+    }
     const newTotal = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
     setTotalExpenses(newTotal);
     updateTotalExpenses(newTotal);
-    drawChart();
-  }, [expenses, updateTotalExpenses]);
+  }, [expenses, googleLoaded]);
 
   const handleAddExpense = (event) => {
     event.preventDefault();
@@ -65,8 +68,7 @@ const Expenses = ({ income, updateTotalExpenses }) => {
     if (percentage === 100) {
       setModalMessage(`You are running out of balance`);
       setShowModal(true);
-    }
-    else if (percentage >= 90) {
+    } else if (percentage >= 90) {
       setModalMessage(`${type} have reached 90% of your income.`);
       setShowModal(true);
     } else if (percentage >= 75) {
@@ -92,6 +94,7 @@ const Expenses = ({ income, updateTotalExpenses }) => {
     localStorage.removeItem('expenses');
     setMessage('All expenses cleared!');
     setTimeout(() => setMessage(''), 3000);
+    updateTotalExpenses(0);
   };
 
   const handleCloseModal = () => {
@@ -131,7 +134,9 @@ const Expenses = ({ income, updateTotalExpenses }) => {
     script.src = 'https://www.gstatic.com/charts/loader.js';
     script.onload = () => {
       window.google.charts.load('current', { packages: ['bar'] });
-      window.google.charts.setOnLoadCallback(drawChart);
+      window.google.charts.setOnLoadCallback(() => {
+        setGoogleLoaded(true);
+      });
     };
     document.head.appendChild(script);
   }, []);
