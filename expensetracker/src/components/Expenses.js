@@ -216,7 +216,7 @@ const Expenses = ({ income, updateTotalExpenses }) => {
             
           </>
         ) : (
-          <p>No expenses added yet.</p>
+          <p id='no-expenses'>No expenses added yet.</p>
         )}
 
         <div className="form-buttons expenseclear">
