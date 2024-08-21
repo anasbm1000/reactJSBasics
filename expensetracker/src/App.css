@@ -480,6 +480,7 @@ button:hover {
 
 .profile-form.addincome h2 {
   color: #ffffff;
+  margin-top: 10px;
 }
 
 .profile-form.addincome th {
@@ -573,3 +574,10 @@ button:hover {
 .form-buttons.expenseclear .home-button {
   margin-top: 20px;
 }
+
+#chart_div {
+  margin-left: 5%;
+  padding: 20px;
+}
+
+
