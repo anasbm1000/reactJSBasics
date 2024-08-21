@@ -66,6 +66,10 @@ const Profile = () => {
     });
   };
 
+  const handleBack = () => {
+    setSubmitted(true);
+  };
+
   return (
     <div className={`profile-container ${submitted ? 'submitted' : ''}`}>
       {submitted ? (
@@ -122,6 +126,7 @@ const Profile = () => {
           <div className="form-buttons">
             <button type="submit">Submit</button>
             <button type="button" onClick={handleClear}>Clear</button>
+            <button type="button" onClick={handleBack}>Back</button>
             <Link to="/" className="home-button">Home</Link>
           </div>
         </form>

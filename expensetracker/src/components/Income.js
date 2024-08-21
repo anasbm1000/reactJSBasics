@@ -101,7 +101,10 @@ const Income = ({ income, setIncome }) => {
     const updatedCategories = categories.filter((_, i) => i !== index);
     setCategories(updatedCategories);
   };
-
+  
+  const handleBack = () => {
+    setSubmitted(true);
+  };
   return (
     <div className={`profile-container ${submitted ? 'submitted' : ''}`}>
       {submitted && (
@@ -171,6 +174,7 @@ const Income = ({ income, setIncome }) => {
           <div className="form-buttons">
             <button type="submit">Save</button>
             <button type="button" onClick={handleClear}>Clear</button>
+            <button type="button" onClick={handleBack}>Back</button>
             <Link to="/" className="home-button">Home</Link>
           </div>
         </form>
