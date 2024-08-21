@@ -27,6 +27,7 @@ const Expenses = ({ income, updateTotalExpenses }) => {
     const newTotal = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
     setTotalExpenses(newTotal);
     updateTotalExpenses(newTotal);
+    drawChart();
   }, [expenses, updateTotalExpenses]);
 
   const handleAddExpense = (event) => {
@@ -97,6 +98,44 @@ const Expenses = ({ income, updateTotalExpenses }) => {
     setShowModal(false);
   };
 
+  const drawChart = () => {
+    if (window.google && window.google.visualization) {
+      const data = window.google.visualization.arrayToDataTable([
+        ['Expense', 'Amount'],
+        ...expenses.map(expense => [expense.name, expense.amount])
+      ]);
+
+      const options = {
+        chart: {
+          title: 'Expenses Breakdown',
+        },
+        hAxis: {
+          title: 'Expense',
+          minValue: 0
+        },
+        vAxis: {
+          title: 'Amount',
+          minValue: 0,
+          gridlines: { count: -1 },
+          ticks: Array.from({ length: Math.ceil(Math.max(...expenses.map(expense => expense.amount)) / 10000) + 1 }, (_, i) => i * 10000)
+        }
+      };
+
+      const chart = new window.google.charts.Bar(document.getElementById('chart_div'));
+      chart.draw(data, window.google.charts.Bar.convertOptions(options));
+    }
+  };
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://www.gstatic.com/charts/loader.js';
+    script.onload = () => {
+      window.google.charts.load('current', { packages: ['bar'] });
+      window.google.charts.setOnLoadCallback(drawChart);
+    };
+    document.head.appendChild(script);
+  }, []);
+
   return (
     <div className="profile-container">
       <Customizedmsg show={showModal} handleClose={handleCloseModal} message={modalMessage} />
@@ -104,7 +143,6 @@ const Expenses = ({ income, updateTotalExpenses }) => {
       <form onSubmit={handleAddExpense} className="profile-form addincome">
         {message && <p className="message">{message}</p>}
         <div className="input-group">
-          
           <input
             type="text"
             placeholder="Expense Name"
@@ -124,49 +162,42 @@ const Expenses = ({ income, updateTotalExpenses }) => {
         </div>
       </form>
 
-      
-
       <h2>Total Expenses: {totalExpenses}</h2>
 
       <div className='profile-table'>
         {expenses.length > 0 ? (
-          <table className="expense-table">
-            <thead>
-              <tr>
-                <th>Expense</th>
-                <th>Amount</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {expenses.map((expense, index) => (
-                <tr key={index}>
-                  <td>{expense.name}</td>
-                  <td>{expense.amount}</td>
-                  <td>
-                    <button onClick={() => handleRemoveExpense(index)}>Remove</button>
-                  </td>
+          <>
+            <table className="expense-table">
+              <thead>
+                <tr>
+                  <th>Expense</th>
+                  <th>Amount</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {expenses.map((expense, index) => (
+                  <tr key={index}>
+                    <td>{expense.name}</td>
+                    <td>{expense.amount}</td>
+                    <td>
+                      <button onClick={() => handleRemoveExpense(index)}>Remove</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div id="chart_div" style={{ width: '100%', height: '500px' }}></div>
+          </>
         ) : (
           <p>No expenses added yet.</p>
         )}
-        
-        
 
         <div className="form-buttons expenseclear">
           <button className="clear-button" onClick={handleClearExpenses}>Clear All</button>
           <Link to="/" className="home-button">Home</Link>
         </div>
       </div>
-
-      
-
-      
-
-      
     </div>
   );
 };
