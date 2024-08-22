@@ -211,7 +211,7 @@ th, td {
   margin-left: 30px;
 }
 
-input {
+input, select {
   padding: 10px;
   font-size: 15px;
   border-radius: 5px;
@@ -221,7 +221,7 @@ input {
   width: 300px;
 }
 
-input::placeholder {
+input::placeholder, select::placeholder {
   color: #ccc;
   font-size: medium;
 }
@@ -250,7 +250,7 @@ input::placeholder {
   color: #333;
 }
 
-.profile-form input {
+.profile-form input, .profile-form select {
   padding: 10px;
   font-size: 1rem;
   border: 1px solid #ccc;
@@ -514,9 +514,13 @@ button:hover {
 }
 
 
-.input-group input, .input-group button {
+.input-group input, .input-group button, .input-group select {
   width: 90%;
   margin-top: 10px;
+}
+
+.input-group select {
+  width: 93.4%;
 }
 
 .input-group button {
