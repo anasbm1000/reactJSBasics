@@ -8,6 +8,7 @@ const Expenses = ({ categories, income, updateTotalExpenses }) => {
   const [expenseName, setExpenseName] = useState('');
   const [expenseAmount, setExpenseAmount] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [totalExpenses, setTotalExpenses] = useState(0);
   const [totalCategoryExpenses, setTotalCategoryExpenses] = useState({});  const [message, setMessage] = useState('');
   const [modalMessage, setModalMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -26,6 +27,7 @@ const Expenses = ({ categories, income, updateTotalExpenses }) => {
       drawChart();
     }
     const newTotalExpenses = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
+    setTotalExpenses(newTotalExpenses);
     updateTotalExpenses(newTotalExpenses);
     checkPercentageAlert(newTotalExpenses, 'total expenses');
   }, [googleLoaded, expenses, updateTotalExpenses]);
@@ -221,7 +223,7 @@ const Expenses = ({ categories, income, updateTotalExpenses }) => {
         </div>
       </form>
 
-      <h2>Total Expenses: {}</h2>
+      <h2>Total Expenses: {totalExpenses}</h2>
 
       <div className='profile-table'>
         {expenses.length > 0 ? (
