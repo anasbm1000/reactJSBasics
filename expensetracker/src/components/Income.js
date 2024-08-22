@@ -18,9 +18,10 @@ const Income = ({ income, setIncome }) => {
     if (storedIncomeData) {
       const parsedData = JSON.parse(storedIncomeData);
       setCategories(parsedData.categories);
+      setIncome(parsedData.income);
       setSubmitted(true);
     }
-  }, []);
+  }, [setCategories]);
 
   const handleChange = (event, index) => {
     const { name, value } = event.target;
@@ -70,6 +71,7 @@ const Income = ({ income, setIncome }) => {
     event.preventDefault();
     const incomeData = { income, categories };
     localStorage.setItem('incomeData', JSON.stringify(incomeData));
+    setIncome(income, categories);
     setSubmitted(true);
   };
 
