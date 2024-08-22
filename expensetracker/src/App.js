@@ -11,10 +11,13 @@ import './App.css';
 const App = () => {
   const [income, setIncome] = useState(0);
   const [totalExpenses, setTotalExpenses] = useState(0);
-  
+  const [categories, setCategories] = useState([]); // Store categories
+
   useEffect(() => {
     const storedIncome = localStorage.getItem('income');
     const storedExpenses = localStorage.getItem('expenses');
+    const storedCategories = localStorage.getItem('incomeData');
+    
     if (storedIncome) {
       setIncome(Number(storedIncome));
     }
@@ -23,10 +26,15 @@ const App = () => {
       const newTotalExpenses = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
       setTotalExpenses(newTotalExpenses);
     }
+    if (storedCategories) {
+      const parsedData = JSON.parse(storedCategories);
+      setCategories(parsedData.categories);
+    }
   }, []);
 
-  const handleSetIncome = (newIncome) => {
+  const handleSetIncome = (newIncome, newCategories) => {
     setIncome(newIncome);
+    setCategories(newCategories);
     localStorage.setItem('income', newIncome);
   };
 
@@ -38,14 +46,13 @@ const App = () => {
 
   return (
     <Router>
-      
       <main>
         <h1>Your available balance is: <span id="expense" className="blink">Rs {availableBalance}</span></h1>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/income" element={<Income income={income} setIncome={handleSetIncome} />} />
-          <Route path="/expenses" element={<Expenses income={income} updateTotalExpenses={handleUpdateTotalExpenses} />} />
+          <Route path="/expenses" element={<Expenses categories={categories} income={income} updateTotalExpenses={handleUpdateTotalExpenses} />} />
           <Route path="/customizedmsg" element={<Customizedmsg />} />
         </Routes>
       </main>
