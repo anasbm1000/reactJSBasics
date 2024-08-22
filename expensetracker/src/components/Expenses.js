@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import '../App.css';
 import Customizedmsg from './Customizedmsg';
 
-const Expenses = ({ income, updateTotalExpenses }) => {
+const Expenses = ({ categories, income, updateTotalExpenses }) => {
   const [expenses, setExpenses] = useState([]);
   const [expenseName, setExpenseName] = useState('');
   const [expenseAmount, setExpenseAmount] = useState('');
-  const [totalExpenses, setTotalExpenses] = useState(0);
-  const [message, setMessage] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [totalCategoryExpenses, setTotalCategoryExpenses] = useState({});  const [message, setMessage] = useState('');
   const [modalMessage, setModalMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [googleLoaded, setGoogleLoaded] = useState(false);
@@ -17,63 +17,74 @@ const Expenses = ({ income, updateTotalExpenses }) => {
   useEffect(() => {
     const storedExpenses = localStorage.getItem('expenses');
     if (storedExpenses) {
-      const expenses = JSON.parse(storedExpenses);
-      setExpenses(expenses);
-      const newTotal = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
-      setTotalExpenses(newTotal);
-      updateTotalExpenses(newTotal);
+      setExpenses(JSON.parse(storedExpenses));
     }
-  }, [updateTotalExpenses]);
+  }, []);
 
   useEffect(() => {
     if (googleLoaded) {
       drawChart();
     }
-    const newTotal = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
-    setTotalExpenses(newTotal);
-    updateTotalExpenses(newTotal);
-  }, [expenses, googleLoaded]);
+    const newTotalExpenses = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
+    updateTotalExpenses(newTotalExpenses);
+    checkPercentageAlert(newTotalExpenses, 'total expenses');
+  }, [googleLoaded, expenses, updateTotalExpenses]);
 
-  const handleAddExpense = (event) => {
-    event.preventDefault();
-    const numericExpenseAmount = Number(expenseAmount);
+  const handleAddExpense = (e) => {
+    e.preventDefault();
 
-    if (!expenseName || numericExpenseAmount < 0) {
-      setModalMessage('Please enter a valid expense name and amount greater than or equal to zero.');
+    if (!expenseName || !expenseAmount || !selectedCategory) {
+      setModalMessage('Please fill all fields');
       setShowModal(true);
       return;
     }
 
-    const newTotalExpenses = totalExpenses + numericExpenseAmount;
-
-    if (newTotalExpenses > income) {
-      setModalMessage('Total expenses exceed your income.');
+    if (Number(expenseAmount) < 0) {
+      setModalMessage('Amount cannot be less than zero');
       setShowModal(true);
       return;
     }
 
+    const categoryLimit = categories.find(cat => cat.name === selectedCategory)?.limit;
+    const currentCategoryExpenses = totalCategoryExpenses[selectedCategory] || 0;
+
+    if (currentCategoryExpenses + Number(expenseAmount) > categoryLimit) {
+      setModalMessage('This expense exceeds the category limit');
+      setShowModal(true);
+      return;
+    }
+
+    const newExpense = {
+      name: expenseName,
+      amount: Number(expenseAmount),
+      category: selectedCategory
+    };
+
+    let updatedExpenses;
     if (editIndex !== null) {
-      // Editing an existing expense
-      const updatedExpenses = [...expenses];
-      const oldAmount = updatedExpenses[editIndex].amount;
-      updatedExpenses[editIndex] = { name: expenseName, amount: numericExpenseAmount };
-      setExpenses(updatedExpenses);
-      localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
+      updatedExpenses = expenses.map((expense, index) => index === editIndex ? newExpense : expense);
       setEditIndex(null);
-      setMessage('Expense updated successfully!');
     } else {
-      // Adding a new expense
-      const newExpense = { name: expenseName, amount: numericExpenseAmount };
-      const updatedExpenses = [...expenses, newExpense];
-      setExpenses(updatedExpenses);
-      localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
-      setMessage('Expense added successfully!');
+      updatedExpenses = [...expenses, newExpense];
     }
+
+    setExpenses(updatedExpenses);
+    localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
+    setMessage('Expense added successfully!');
+
+    setTotalCategoryExpenses({
+      ...totalCategoryExpenses,
+      [selectedCategory]: currentCategoryExpenses + Number(expenseAmount)
+    });
+
+    const newTotalExpenses = updatedExpenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
+    checkPercentageAlert(newTotalExpenses, 'total expenses');
 
     setExpenseName('');
     setExpenseAmount('');
+    setSelectedCategory('');
     setTimeout(() => setMessage(''), 3000);
-    checkPercentageAlert(newTotalExpenses, 'total expenses');
+    checkPercentageAlert(updateTotalExpenses, 'total expenses');
   };
 
   const checkPercentageAlert = (value, type) => {
@@ -95,15 +106,24 @@ const Expenses = ({ income, updateTotalExpenses }) => {
 
   const handleRemoveExpense = (index) => {
     const updatedExpenses = expenses.filter((_, i) => i !== index);
+    const removedExpense = expenses[index];
     setExpenses(updatedExpenses);
     localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
     setMessage('Expense removed successfully!');
     setTimeout(() => setMessage(''), 3000);
+
+    const updatedCategoryExpenses = {
+      ...totalCategoryExpenses,
+      [removedExpense.category]: totalCategoryExpenses[removedExpense.category] - removedExpense.amount
+    };
+    setTotalCategoryExpenses(updatedCategoryExpenses);
+
+    const newTotalExpenses = updatedExpenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
+    checkPercentageAlert(newTotalExpenses, 'total expenses');
   };
 
   const handleClearExpenses = () => {
     setExpenses([]);
-    setTotalExpenses(0);
     localStorage.removeItem('expenses');
     setMessage('All expenses cleared!');
     setTimeout(() => setMessage(''), 3000);
@@ -114,6 +134,7 @@ const Expenses = ({ income, updateTotalExpenses }) => {
     const expenseToEdit = expenses[index];
     setExpenseName(expenseToEdit.name);
     setExpenseAmount(expenseToEdit.amount);
+    setSelectedCategory(expenseToEdit.category);
     setEditIndex(index);
   };
 
@@ -175,6 +196,17 @@ const Expenses = ({ income, updateTotalExpenses }) => {
             value={expenseName}
             onChange={(e) => setExpenseName(e.target.value)}
           />
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="">Select a category</option>
+            {categories.map((category, index) => (
+              <option key={index} value={category.name}>
+                {category.name}
+              </option>
+            ))}
+          </select>
           <input
             type="number"
             placeholder="Amount"
@@ -182,13 +214,14 @@ const Expenses = ({ income, updateTotalExpenses }) => {
             onChange={(e) => setExpenseAmount(e.target.value)}
             min="0"
           />
+          
         </div>
         <div className="form-buttons">
           <button type="submit">{editIndex !== null ? 'Update Expense' : 'Add Expense'}</button>
         </div>
       </form>
 
-      <h2>Total Expenses: {totalExpenses}</h2>
+      <h2>Total Expenses: {}</h2>
 
       <div className='profile-table'>
         {expenses.length > 0 ? (
@@ -197,9 +230,10 @@ const Expenses = ({ income, updateTotalExpenses }) => {
               <thead>
                 <tr>
                   <th>Expense</th>
+                  <th>Category</th>
                   <th>Amount</th>
-                  <th>Remove</th>
                   <th>Edit</th>
+                  <th>Remove</th>
                 </tr>
               </thead>
               <tbody>
@@ -207,8 +241,9 @@ const Expenses = ({ income, updateTotalExpenses }) => {
                   <tr key={index}>
                     <td>{expense.name}</td>
                     <td>{expense.amount}</td>
-                    <td><button onClick={() => handleRemoveExpense(index)}>Remove</button></td>
+                    <td>{expense.category}</td>
                     <td><button onClick={() => handleEditExpense(index)}>Edit</button></td>
+                    <td><button onClick={() => handleRemoveExpense(index)}>Remove</button></td>
                   </tr>
                 ))}
               </tbody>
