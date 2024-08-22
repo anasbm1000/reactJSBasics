@@ -110,18 +110,26 @@ const Income = ({ income, setIncome }) => {
   return (
     <div className={`profile-container ${submitted ? 'submitted' : ''}`}>
       {submitted && (
-        <div className="profile incomebackground">
-          <div className="profile-details incomebackground">
-            <h2>Income Details</h2>
-            <div><strong>Income:</strong> {income}</div>
-            {categories.map((category, index) => (
-              <div key={index}>
-                <strong>{category.name} Limit:</strong> {category.limit}
-              </div>
-            ))}
-          </div>
-          <div className="profile-buttons">
-            <button onClick={handleEdit}>Edit</button>
+        <div className="profile-table forincome">
+          <>
+            <table className="expense-table forincome">
+              <tbody>
+                <tr>
+                  <td id="tableheading"><strong>Total Income</strong></td>
+                  <td>{income}</td>
+                </tr>
+                {categories.map((category, index) => (
+                  <tr key={index}>
+                    <td id="tableheading"><strong>{category.name} Limit</strong></td>
+                    <td>{category.limit}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            
+          </>
+          <div className="form-buttons expenseclear">
+            <button onClick={handleEdit} className="home-button">Edit</button>
             <Link to="/" className="home-button">Home</Link>
           </div>
         </div>
