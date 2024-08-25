@@ -116,12 +116,12 @@ const Income = ({ income, setIncome }) => {
               <tbody>
                 <tr>
                   <td id="tableheading"><strong>Total Income</strong></td>
-                  <td>{income}</td>
+                  <td id="incomevalues">Rs. {income}</td>
                 </tr>
                 {categories.map((category, index) => (
                   <tr key={index}>
-                    <td id="tableheading"><strong>{category.name} Limit</strong></td>
-                    <td>{category.limit}</td>
+                    <td><strong>{category.name} Limit</strong></td>
+                    <td id="incomevalues">Rs. {category.limit}</td>
                   </tr>
                 ))}
               </tbody>
