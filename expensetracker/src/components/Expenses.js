@@ -239,7 +239,8 @@ const Expenses = ({ categories, income, updateTotalExpenses }) => {
 
       {submitted && (
         <div className="profile-table">
-          <table className="expense-table">
+          <h2>Total Expense : <span id="expenses" className="blink">Rs {totalExpenses}</span></h2>
+          <table className="expense-table expensesummary">
             <thead>
               <tr>
                 <th>Expense</th>
@@ -264,7 +265,7 @@ const Expenses = ({ categories, income, updateTotalExpenses }) => {
 
           {expenses.length > 0 && (
             <>
-              <div id="chart_div" className="chart-div"></div>
+              <div id="chart_div" className="chart-div"  style={{width: '85%', height: '400px' }}></div>
               <div className="form-buttons">
                 <button onClick={handleClearExpenses}>Clear All</button>
                 <button onClick={handleHideSummary}>Back</button>
