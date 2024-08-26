@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import Customizedmsg from './Customizedmsg';
 import '../App.css';
 
-const Income = ({ income, setIncome }) => {
-  const [categories, setCategories] = useState([
+const Income = ({ income = 0, setIncome, categories = [] }) => {
+  const [localCategories, setLocalCategories] = useState(categories.length ? categories : [
     { name: 'Household', limit: '' },
     { name: 'Special Functions', limit: '' },
     { name: 'Emergencies', limit: '' }
@@ -17,11 +17,11 @@ const Income = ({ income, setIncome }) => {
     const storedIncomeData = localStorage.getItem('incomeData');
     if (storedIncomeData) {
       const parsedData = JSON.parse(storedIncomeData);
-      setCategories(parsedData.categories);
-      setIncome(parsedData.income);
+      setLocalCategories(parsedData.categories || localCategories);
+      setIncome(parsedData.income || income);
       setSubmitted(true);
     }
-  }, [setCategories]);
+  }, [setLocalCategories]);
 
   const handleChange = (event, index) => {
     const { name, value } = event.target;
@@ -34,7 +34,7 @@ const Income = ({ income, setIncome }) => {
 
     if (name === 'income') {
       const newIncome = Number(value);
-      const totalCategoryLimit = categories.reduce((sum, cat) => sum + Number(cat.limit), 0);
+      const totalCategoryLimit = localCategories.reduce((sum, cat) => sum + Number(cat.limit), 0);
       if (newIncome < totalCategoryLimit) {
         setCustomMessage('Total category limits exceed income');
         setShowMessage(true);
@@ -42,7 +42,7 @@ const Income = ({ income, setIncome }) => {
       }
       setIncome(newIncome);
     } else {
-      const updatedCategories = [...categories];
+      const updatedCategories = [...localCategories];
       const newLimit = Number(value);
 
       const totalNewLimit = updatedCategories.reduce((sum, cat, i) =>
@@ -54,13 +54,13 @@ const Income = ({ income, setIncome }) => {
         return;
       }
       updatedCategories[index].limit = newLimit;
-      setCategories(updatedCategories);
+      setLocalCategories(updatedCategories);
     }
   };
 
   const addCategory = () => {
-    if (categories.length < 10) {
-      setCategories([...categories, { name: 'New Category', limit: '' }]);
+    if (localCategories.length < 10) {
+      setLocalCategories([...localCategories, { name: 'New Category', limit: '' }]);
     } else {
       setCustomMessage('Maximum of 10 categories allowed');
       setShowMessage(true);
@@ -69,9 +69,9 @@ const Income = ({ income, setIncome }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const incomeData = { income, categories };
+    const incomeData = { income, categories : localCategories };
     localStorage.setItem('incomeData', JSON.stringify(incomeData));
-    setIncome(income, categories);
+    setIncome(income, localCategories);
     setSubmitted(true);
   };
 
@@ -81,7 +81,7 @@ const Income = ({ income, setIncome }) => {
 
   const handleClear = () => {
     setIncome(0);
-    setCategories([
+    setLocalCategories([
       { name: 'Household', limit: '' },
       { name: 'Special Functions', limit: '' },
       { name: 'Emergencies', limit: '' }
@@ -94,14 +94,14 @@ const Income = ({ income, setIncome }) => {
   };
 
   const handleCategoryNameChange = (index, newName) => {
-    const updatedCategories = [...categories];
+    const updatedCategories = [...localCategories];
     updatedCategories[index].name = newName;
-    setCategories(updatedCategories);
+    setLocalCategories(updatedCategories);
   };
 
   const handleRemoveCategory = (index) => {
-    const updatedCategories = categories.filter((_, i) => i !== index);
-    setCategories(updatedCategories);
+    const updatedCategories = localCategories.filter((_, i) => i !== index);
+    setLocalCategories(updatedCategories);
   };
   
   const handleBack = () => {
@@ -118,7 +118,7 @@ const Income = ({ income, setIncome }) => {
                   <td id="tableheading"><strong>Total Income</strong></td>
                   <td id="incomevalues">Rs. {income}</td>
                 </tr>
-                {categories.map((category, index) => (
+                {localCategories.map((category, index) => (
                   <tr key={index}>
                     <td><strong>{category.name} Limit</strong></td>
                     <td id="incomevalues">Rs. {category.limit}</td>
@@ -151,7 +151,7 @@ const Income = ({ income, setIncome }) => {
                   />
                 </td>
               </tr>
-              {categories.map((category, index) => (
+              {localCategories.map((category, index) => (
                 <React.Fragment key={index}>
                   <tr>
                     <td>
