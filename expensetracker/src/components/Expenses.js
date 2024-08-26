@@ -104,24 +104,32 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
     const categoryLimit = categories.find(cat => cat.name === selectedCategory)?.limit;
     const currentCategoryExpenses = totalCategoryExpenses[selectedCategory] || 0;
 
-    if (currentCategoryExpenses + Number(expenseAmount) > categoryLimit) {
-      setModalMessage('This expense exceeds the category limit');
-      setShowModal(true);
-      return;
-    }
-
-    const newExpense = {
-      name: expenseName,
-      amount: Number(expenseAmount),
-      category: selectedCategory
-    };
-
     let updatedExpenses;
+    let updatedCategoryExpenses;
+    
     if (editIndex !== null) {
-      updatedExpenses = expenses.map((expense, index) => index === editIndex ? newExpense : expense);
+      const originalExpense = expenses[editIndex];
+      const originalAmount = originalExpense.amount;
+
+      const newCategoryExpenses = currentCategoryExpenses - originalAmount;
+
+      if (newCategoryExpenses + Number(expenseAmount) > categoryLimit) {
+        setModalMessage('This expense exceeds the category limit');
+        setShowModal(true);
+        return;
+      }
+      updatedExpenses = expenses.map((expense, index) => index === editIndex ? { ...expense, name: expenseName, amount: Number(expenseAmount), category: selectedCategory } : expense);
+      updatedCategoryExpenses = newCategoryExpenses + Number(expenseAmount);
       setEditIndex(null);
     } else {
-      updatedExpenses = [...expenses, newExpense];
+      if (currentCategoryExpenses + Number(expenseAmount) > categoryLimit) {
+        setModalMessage('This expense exceeds the category limit');
+        setShowModal(true);
+        return;
+      }
+
+      updatedExpenses = [...expenses, { name: expenseName, amount: Number(expenseAmount), category: selectedCategory }];
+      updatedCategoryExpenses = currentCategoryExpenses + Number(expenseAmount);
     }
 
     setExpenses(updatedExpenses);
@@ -130,7 +138,7 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
 
     setTotalCategoryExpenses({
       ...totalCategoryExpenses,
-      [selectedCategory]: currentCategoryExpenses + Number(expenseAmount)
+      [selectedCategory]: updatedCategoryExpenses
     });
 
     const newTotalExpenses = updatedExpenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
