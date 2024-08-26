@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css';
 import Customizedmsg from './Customizedmsg';
 
-const Expenses = ({ categories, income, updateTotalExpenses }) => {
+const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
   const [expenses, setExpenses] = useState([]);
   const [expenseName, setExpenseName] = useState('');
   const [expenseAmount, setExpenseAmount] = useState('');
@@ -16,6 +16,7 @@ const Expenses = ({ categories, income, updateTotalExpenses }) => {
   const [googleLoaded, setGoogleLoaded] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
   useEffect(() => {
     const storedExpenses = localStorage.getItem('expenses');
@@ -25,14 +26,65 @@ const Expenses = ({ categories, income, updateTotalExpenses }) => {
   }, []);
 
   useEffect(() => {
-    if (googleLoaded && submitted) {
-        drawChart();
+    if (categories.length > 0) {
+      setLoadingCategories(false);
     }
+  }, [categories]);
+
+  const checkPercentageAlert = useCallback((value, type) => {
+    const percentage = (value / income) * 100;
+    if (percentage === 100) {
+      setModalMessage(`You are running out of balance`);
+      setShowModal(true);
+    } else if (percentage >= 90) {
+      setModalMessage(`${type} have reached 90% of your income.`);
+      setShowModal(true);
+    } else if (percentage >= 75) {
+      setModalMessage(`${type} have reached 75% of your income.`);
+      setShowModal(true);
+    } else if (percentage >= 50) {
+      setModalMessage(`${type} have reached 50% of your income.`);
+      setShowModal(true);
+    }
+  }, [income]);
+
+  useEffect(() => {
+    if (googleLoaded && submitted) {
+      const chartContainer = document.getElementById('chart_div');
+      if (chartContainer && window.google && window.google.visualization) {
+        const data = window.google.visualization.arrayToDataTable([
+          ['Expense', 'Amount'],
+          ...expenses.map(expense => [expense.name, expense.amount]),
+        ]);
+
+        const options = {
+          chart: {
+            title: 'Expenses Breakdown',
+          },
+          hAxis: {
+            title: 'Expense',
+            minValue: 0,
+          },
+          vAxis: {
+            title: 'Amount',
+            minValue: 0,
+            gridlines: { count: -1 },
+            ticks: Array.from({
+              length: Math.ceil(Math.max(...expenses.map(expense => expense.amount)) / 10000) + 1,
+            }, (_, i) => i * 10000),
+          },
+        };
+
+        const chart = new window.google.charts.Bar(chartContainer);
+        chart.draw(data, window.google.charts.Bar.convertOptions(options));
+      }
+    }
+
     const newTotalExpenses = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
     setTotalExpenses(newTotalExpenses);
     updateTotalExpenses(newTotalExpenses);
-    checkPercentageAlert(newTotalExpenses, 'total expenses');
-}, [googleLoaded, expenses, submitted, updateTotalExpenses]);
+    
+  }, [googleLoaded, expenses, submitted, updateTotalExpenses]);
 
   const handleAddExpense = (e) => {
     e.preventDefault();
@@ -90,23 +142,6 @@ const Expenses = ({ categories, income, updateTotalExpenses }) => {
     setTimeout(() => setMessage(''), 3000);
   };
 
-  const checkPercentageAlert = (value, type) => {
-    const percentage = (value / income) * 100;
-    if (percentage === 100) {
-      setModalMessage(`You are running out of balance`);
-      setShowModal(true);
-    } else if (percentage >= 90) {
-      setModalMessage(`${type} have reached 90% of your income.`);
-      setShowModal(true);
-    } else if (percentage >= 75) {
-      setModalMessage(`${type} have reached 75% of your income.`);
-      setShowModal(true);
-    } else if (percentage >= 50) {
-      setModalMessage(`${type} have reached 50% of your income.`);
-      setShowModal(true);
-    }
-  };
-
   const handleRemoveExpense = (index) => {
     const updatedExpenses = expenses.filter((_, i) => i !== index);
     const removedExpense = expenses[index];
@@ -146,35 +181,6 @@ const Expenses = ({ categories, income, updateTotalExpenses }) => {
     setShowModal(false);
   };
 
-  const drawChart = () => {
-    const chartContainer = document.getElementById('chart_div');
-    if (chartContainer && window.google && window.google.visualization) {
-        const data = window.google.visualization.arrayToDataTable([
-            ['Expense', 'Amount'],
-            ...expenses.map(expense => [expense.name, expense.amount])
-        ]);
-
-        const options = {
-            chart: {
-                title: 'Expenses Breakdown',
-            },
-            hAxis: {
-                title: 'Expense',
-                minValue: 0
-            },
-            vAxis: {
-                title: 'Amount',
-                minValue: 0,
-                gridlines: { count: -1 },
-                ticks: Array.from({ length: Math.ceil(Math.max(...expenses.map(expense => expense.amount)) / 10000) + 1 }, (_, i) => i * 10000)
-            }
-        };
-
-        const chart = new window.google.charts.Bar(chartContainer);
-        chart.draw(data, window.google.charts.Bar.convertOptions(options));
-    }
-};
-
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://www.gstatic.com/charts/loader.js';
@@ -194,6 +200,10 @@ const Expenses = ({ categories, income, updateTotalExpenses }) => {
   const handleHideSummary = () => {
     setSubmitted(false);
   };
+
+  if (loadingCategories) {
+    return <p>Loading categories...</p>;
+  }
 
   return (
     <div className={`profile-container ${submitted ? 'submitted' : ''}`}>
@@ -215,7 +225,7 @@ const Expenses = ({ categories, income, updateTotalExpenses }) => {
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
               <option value="">Select a category</option>
-              {categories.map((category, index) => (
+              {categories && categories.map((category, index) => (
                 <option key={index} value={category.name}>
                   {category.name}
                 </option>
