@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { Chart } from 'react-google-charts'; // Import the Chart component
 import '../App.css';
 import Customizedmsg from './Customizedmsg';
 
@@ -13,10 +14,10 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
   const [message, setMessage] = useState('');
   const [modalMessage, setModalMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [googleLoaded, setGoogleLoaded] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [loadingCategories, setLoadingCategories] = useState(true);
+  const [categoryColors, setCategoryColors] = useState({});
 
   useEffect(() => {
     const storedExpenses = localStorage.getItem('expenses');
@@ -28,6 +29,20 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
   useEffect(() => {
     if (categories.length > 0) {
       setLoadingCategories(false);
+
+      const newCategoryColors = { ...categoryColors };
+      categories.forEach(category => {
+        if (!newCategoryColors[category.name]) {
+          // Ensure that the generated color is exactly 6 characters long
+          let color;
+          do {
+            color = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+          } while (Object.values(newCategoryColors).includes(color)); // Avoid duplicate colors
+
+          newCategoryColors[category.name] = color;
+        }
+      });
+      setCategoryColors(newCategoryColors);
     }
   }, [categories]);
 
@@ -49,42 +64,10 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
   }, [income]);
 
   useEffect(() => {
-    if (googleLoaded && submitted) {
-      const chartContainer = document.getElementById('chart_div');
-      if (chartContainer && window.google && window.google.visualization) {
-        const data = window.google.visualization.arrayToDataTable([
-          ['Expense', 'Amount'],
-          ...expenses.map(expense => [expense.name, expense.amount]),
-        ]);
-
-        const options = {
-          chart: {
-            title: 'Expenses Breakdown',
-          },
-          hAxis: {
-            title: 'Expense',
-            minValue: 0,
-          },
-          vAxis: {
-            title: 'Amount',
-            minValue: 0,
-            gridlines: { count: -1 },
-            ticks: Array.from({
-              length: Math.ceil(Math.max(...expenses.map(expense => expense.amount)) / 10000) + 1,
-            }, (_, i) => i * 10000),
-          },
-        };
-
-        const chart = new window.google.charts.Bar(chartContainer);
-        chart.draw(data, window.google.charts.Bar.convertOptions(options));
-      }
-    }
-
     const newTotalExpenses = expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
     setTotalExpenses(newTotalExpenses);
     updateTotalExpenses(newTotalExpenses);
-    
-  }, [googleLoaded, expenses, submitted, updateTotalExpenses]);
+  }, [expenses, updateTotalExpenses]);
 
   const handleAddExpense = (e) => {
     e.preventDefault();
@@ -106,7 +89,7 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
 
     let updatedExpenses;
     let updatedCategoryExpenses;
-    
+
     if (editIndex !== null) {
       const originalExpense = expenses[editIndex];
       const originalAmount = originalExpense.amount;
@@ -118,7 +101,9 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
         setShowModal(true);
         return;
       }
-      updatedExpenses = expenses.map((expense, index) => index === editIndex ? { ...expense, name: expenseName, amount: Number(expenseAmount), category: selectedCategory } : expense);
+      updatedExpenses = expenses.map((expense, index) =>
+        index === editIndex ? { ...expense, name: expenseName, amount: Number(expenseAmount), category: selectedCategory } : expense
+      );
       updatedCategoryExpenses = newCategoryExpenses + Number(expenseAmount);
       setEditIndex(null);
     } else {
@@ -189,18 +174,6 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
     setShowModal(false);
   };
 
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://www.gstatic.com/charts/loader.js';
-    script.onload = () => {
-      window.google.charts.load('current', { packages: ['bar'] });
-      window.google.charts.setOnLoadCallback(() => {
-        setGoogleLoaded(true);
-      });
-    };
-    document.head.appendChild(script);
-  }, []);
-
   const handleShowSummary = () => {
     setSubmitted(true);
   };
@@ -212,6 +185,11 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
   if (loadingCategories) {
     return <p>Loading categories...</p>;
   }
+
+  const chartData = [
+    ['Expense', 'Amount', { role: 'style' }],
+    ...expenses.map(expense => [expense.name, expense.amount, categoryColors[expense.category] || '#000000']),
+  ];
 
   return (
     <div className={`profile-container ${submitted ? 'submitted' : ''}`}>
@@ -274,23 +252,39 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
                   <td>{expense.name}</td>
                   <td>{expense.category}</td>
                   <td>{expense.amount}</td>
-                  <td><button onClick={() => handleEditExpense(index)}>Edit</button></td>
-                  <td><button onClick={() => handleRemoveExpense(index)}>Remove</button></td>
+                  <td>
+                    <button onClick={() => handleEditExpense(index)}>Edit</button>
+                  </td>
+                  <td>
+                    <button onClick={() => handleRemoveExpense(index)}>Remove</button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-
-          {expenses.length > 0 && (
-            <>
-              <div id="chart_div" className="chart-div"  style={{width: '85%', height: '400px' }}></div>
-              <div className="form-buttons">
-                <button onClick={handleClearExpenses}>Clear All</button>
-                <button onClick={handleHideSummary}>Back</button>
-                <Link to="/" className="home-button expenses">Home</Link>
-              </div>
-            </>
-          )}
+          <Chart
+            chartType="BarChart"
+            data={chartData}
+            options={{
+              title: 'Expenses Summary',
+              chartArea: { width: '50%' },
+              hAxis: {
+                title: 'Total Expenses',
+                minValue: 0,
+              },
+              vAxis: {
+                title: 'Expense',
+              },
+              legend: 'none',
+            }}
+            width="100%"
+            height="400px"
+          />
+          <div className="form-buttons">
+            <button onClick={handleClearExpenses}>Clear All</button>
+            <button onClick={handleHideSummary}>Add Expenses</button>
+            <Link to="/" className="home-button expenses">Home</Link>
+          </div>
         </div>
       )}
     </div>
