@@ -44,7 +44,7 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
       });
       setCategoryColors(newCategoryColors);
     }
-  }, [categories]);
+  }, [categories, categoryColors]);
 
   const checkPercentageAlert = useCallback((value, type) => {
     const percentage = (value / income) * 100;
@@ -263,23 +263,27 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
             </tbody>
           </table>
           <Chart
-            chartType="BarChart"
+            chartType="ColumnChart"
             data={chartData}
             options={{
               title: 'Expenses Summary',
               chartArea: { width: '50%' },
               hAxis: {
-                title: 'Total Expenses',
-                minValue: 0,
+                title: 'Expense Name',
               },
               vAxis: {
-                title: 'Expense',
+                title: 'Amount Spent',
+                minValue: 0,
               },
-              legend: 'none',
+              legend: {
+                position: 'top', 
+                alignment: 'end', 
+              },
             }}
             width="100%"
             height="400px"
           />
+
           <div className="form-buttons">
             <button onClick={handleClearExpenses}>Clear All</button>
             <button onClick={handleHideSummary}>Add Expenses</button>
