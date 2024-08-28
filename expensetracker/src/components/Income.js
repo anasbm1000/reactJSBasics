@@ -129,8 +129,8 @@ const Income = ({ income = 0, setIncome, categories = [] }) => {
             
           </>
           <div className="form-buttons expenseclear">
+            <Link to="/" className="home-button">Back</Link>
             <button onClick={handleEdit} className="home-button">Edit</button>
-            <Link to="/" className="home-button">Home</Link>
           </div>
         </div>
       )}
@@ -182,10 +182,10 @@ const Income = ({ income = 0, setIncome, categories = [] }) => {
           </table>
           <button type="button" onClick={addCategory}>Add Category</button>
           <div className="form-buttons">
-            <button type="submit">Save</button>
-            <button type="button" onClick={handleClear}>Clear</button>
             <button type="button" onClick={handleBack}>Back</button>
             <Link to="/" className="home-button">Home</Link>
+            <button type="button" onClick={handleClear}>Clear All</button>
+            <button type="submit">Save</button>
           </div>
         </form>
       )}
