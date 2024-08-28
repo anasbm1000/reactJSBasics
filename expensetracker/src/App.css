@@ -605,7 +605,8 @@ button:hover {
 
 .expense-table.expensesummary td {
   font-size: 1.3rem;
-  width:150px;
+  width:120px;
+  padding: 20px;
 }
 
 .expense-table tr {
@@ -631,4 +632,7 @@ button:hover {
   padding: 20px;
 }
 
+.form-buttons.forbarchart {
+  margin-bottom: 20px;
+}
 
