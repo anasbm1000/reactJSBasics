@@ -11,7 +11,7 @@ import './App.css';
 const App = () => {
   const [income, setIncome] = useState(0);
   const [totalExpenses, setTotalExpenses] = useState(0);
-  const [categories, setCategories] = useState([]); // Store categories
+  const [categories, setCategories] = useState([]); 
 
   useEffect(() => {
     const storedIncome = localStorage.getItem('income');
