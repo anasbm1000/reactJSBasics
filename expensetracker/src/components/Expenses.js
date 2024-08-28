@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Chart } from 'react-google-charts'; // Import the Chart component
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import '../App.css';
 import Customizedmsg from './Customizedmsg';
 
@@ -33,7 +33,6 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
       const newCategoryColors = { ...categoryColors };
       categories.forEach(category => {
         if (!newCategoryColors[category.name]) {
-          // Ensure that the generated color is exactly 6 characters long
           let color;
           do {
             color = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
@@ -186,51 +185,58 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
     return <p>Loading categories...</p>;
   }
 
-  const chartData = [
-    ['Expense', 'Amount', { role: 'style' }],
-    ...expenses.map(expense => [expense.name, expense.amount, categoryColors[expense.category] || '#000000']),
-  ];
+  const chartData = expenses.map(expense => ({
+    name: expense.name,
+    [expense.category]: expense.amount,
+    tooltip: `Expenses: ${expense.name}, Category: ${expense.category}, Amount: Rs ${expense.amount}`
+  }));
+  
 
   return (
     <div className={`profile-container ${submitted ? 'submitted' : ''}`}>
       <Customizedmsg show={showModal} handleClose={handleCloseModal} message={modalMessage} />
 
       {!submitted && (
-        <form onSubmit={handleAddExpense} className="profile-form addincome">
-          <h2>Expenses</h2>
-          {message && <p className="message">{message}</p>}
-          <div className="input-group">
-            <input
-              type="text"
-              placeholder="Expense Name"
-              value={expenseName}
-              onChange={(e) => setExpenseName(e.target.value)}
-            />
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="">Select a category</option>
-              {categories && categories.map((category, index) => (
-                <option key={index} value={category.name}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-            <input
-              type="number"
-              placeholder="Amount"
-              value={expenseAmount}
-              onChange={(e) => setExpenseAmount(e.target.value)}
-              min="0"
-            />
-          </div>
-          <div className="form-buttons">
-            <button type="submit">{editIndex !== null ? 'Update Expense' : 'Add Expense'}</button>
-            <button type="button" onClick={handleShowSummary}>Expense Summary</button>
-            <Link to="/" className="home-button">Home</Link>
-          </div>
-        </form>
+        
+          <form onSubmit={handleAddExpense} className="profile-form addincome">
+            <h2>Expenses</h2>
+            {message && <p className="message">{message}</p>}
+            <div className="input-group">
+              <input
+                type="text"
+                placeholder="Expense Name"
+                value={expenseName}
+                onChange={(e) => setExpenseName(e.target.value)}
+              />
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option value="">Select a category</option>
+                {categories && categories.map((category, index) => (
+                  <option key={index} value={category.name}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                placeholder="Amount"
+                value={expenseAmount}
+                onChange={(e) => setExpenseAmount(e.target.value)}
+                min="0"
+              />
+            </div>
+            <div className="form-buttons">
+              <button type="submit">{editIndex !== null ? 'Update Expense' : 'Add Expense'}</button>
+              <button type="button" onClick={handleShowSummary}>Expense Summary</button>
+              <Link to="/" className="home-button">Home</Link>
+            </div>
+            
+          </form>
+          
+        
+        
       )}
 
       {submitted && (
@@ -262,33 +268,35 @@ const Expenses = ({ categories = [], income, updateTotalExpenses }) => {
               ))}
             </tbody>
           </table>
-          <Chart
-            chartType="ColumnChart"
-            data={chartData}
-            options={{
-              title: 'Expenses Summary',
-              chartArea: { width: '50%' },
-              hAxis: {
-                title: 'Expense Name',
-              },
-              vAxis: {
-                title: 'Amount Spent',
-                minValue: 0,
-              },
-              legend: {
-                position: 'top', 
-                alignment: 'end', 
-              },
-            }}
-            width="100%"
-            height="400px"
-          />
-
-          <div className="form-buttons">
+          <div className="form-buttons forbarchart">
             <button onClick={handleClearExpenses}>Clear All</button>
             <button onClick={handleHideSummary}>Add Expenses</button>
             <Link to="/" className="home-button expenses">Home</Link>
           </div>
+          <ResponsiveContainer width="100%" height={400} style={{ backgroundColor: '#ffffff' }}>
+            <BarChart
+              data={chartData}
+              margin={{
+                top: 20,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+              barCategoryGap={10}
+              barGap={1}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" label={{ value: 'Expenses -->', position: 'insideBottomRight', offset: -10, }} />
+              <YAxis label={{ value: 'Amount Spent (in Rs) -->', angle: -90, position: 'insideLeft', offset: 1 }} />
+              <Tooltip formatter={(value, name, props) => props.payload.tooltip} />
+              <Legend />
+              {categories.map((category, index) => (
+                <Bar key={index} dataKey={category.name} fill={categoryColors[category.name]} />
+              ))}
+            </BarChart>
+          </ResponsiveContainer>
+
+          
         </div>
       )}
     </div>
