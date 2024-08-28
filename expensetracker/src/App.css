@@ -308,10 +308,17 @@ input::placeholder, select::placeholder {
 .profile-img {
   margin-right: 20px;
   text-align: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .profile-img img {
   border-radius: 50%;
+}
+
+.profile-img h2 {
+  margin-bottom: 10px;
 }
 
 .profile-details {
@@ -323,7 +330,7 @@ input::placeholder, select::placeholder {
   font-size: 15px;
   background: none;
   margin-bottom: 20px;
-  min-height: 400px;
+  min-height: 310px;
 }
 
 .profile-buttons {
@@ -460,12 +467,22 @@ button:hover {
   background-size: cover;
   color:#ffffff;
   gap: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 22px;
+  min-height: 300px;
 }
 
 .profile-details.userprofile {
   color:#ffffff;
   font-weight: bolder;
   font-size: 22px;
+  display: flex;
+  justify-content: center;
+  align-items:flex-start;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .profile.expensesummary {
@@ -515,6 +532,7 @@ button:hover {
 .profile-form.addprofile h2 {
   color: #ffffff;
 }
+
 
 .expense-list {
   color: #ffffff;
